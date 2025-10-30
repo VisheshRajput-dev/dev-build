@@ -30,40 +30,46 @@ export default function Dashboard() {
   }, [user]);
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold">Dashboard</h2>
-        <p className="text-muted-foreground">Your XP, recent submissions, and streak.</p>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <Stat label="Level" value={String(level)} />
-        <Stat label="XP" value={String(xp)} />
-        <Stat label="Recent" value={String(recent.length)} />
-      </div>
-      <div className="rounded-md border">
-        <div className="px-4 py-2 border-b font-medium">Recent submissions</div>
+    <div className="space-y-8">
+      <header className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight">Welcome{user?.displayName ? `, ${user.displayName}` : ''}</h1>
+        <p className="text-muted-foreground">Track your progress and continue practicing.</p>
+      </header>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <StatCard title="Level" value={String(level)} subtitle="+500 XP per level" />
+        <StatCard title="XP" value={String(xp)} subtitle="Earn XP by submitting tasks" />
+        <StatCard title="Recent" value={String(recent.length)} subtitle="Last 5 submissions" />
+      </section>
+
+      <section className="rounded-xl border bg-background/60 backdrop-blur overflow-hidden">
+        <div className="px-4 py-3 border-b font-medium">Recent submissions</div>
         {loading ? (
           <div className="px-4 py-6 text-sm text-muted-foreground">Loading…</div>
         ) : recent.length ? (
           recent.map((r) => (
-            <div key={r.id} className="px-4 py-2 text-sm flex items-center justify-between border-b last:border-b-0">
-              <span>{r.taskId}</span>
+            <div key={r.id} className="px-4 py-3 text-sm flex items-center justify-between border-b last:border-b-0">
+              <div>
+                <div className="font-medium">{r.taskId}</div>
+                <div className="text-xs text-muted-foreground">{new Date(r.createdAt?.toDate?.() ?? Date.now()).toLocaleString()}</div>
+              </div>
               <span className="text-muted-foreground">Score {r.score}</span>
             </div>
           ))
         ) : (
           <div className="px-4 py-6 text-sm text-muted-foreground">No submissions yet.</div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function StatCard({ title, value, subtitle }: { title: string; value: string; subtitle?: string }) {
   return (
-    <div className="rounded-md border p-4">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="text-xl font-semibold">{value}</div>
+    <div className="rounded-xl border bg-background/60 backdrop-blur p-5">
+      <div className="text-xs text-muted-foreground">{title}</div>
+      <div className="text-3xl font-bold leading-tight">{value}</div>
+      {subtitle && <div className="text-xs text-muted-foreground mt-1">{subtitle}</div>}
     </div>
   );
 }

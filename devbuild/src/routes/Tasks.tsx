@@ -18,10 +18,10 @@ export default function Tasks() {
   }, [q, category, difficulty]);
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-end justify-between gap-3 flex-wrap">
+    <div className="space-y-5">
+      <header className="flex items-end justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-2xl font-semibold">Tasks</h2>
+          <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
           <p className="text-muted-foreground text-sm">{filtered.length} of {tasks.length} tasks</p>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -52,26 +52,24 @@ export default function Tasks() {
             <option value="hard">Hard</option>
           </select>
         </div>
-      </div>
+      </header>
 
-      <div className="divide-y border rounded-md">
+      <div className="grid gap-3 md:grid-cols-2">
         {filtered.map((t) => (
-          <Link key={t.id} to={`/app/tasks/${t.id}`} className="flex items-center justify-between p-3 hover:bg-accent">
-            <div className="space-y-1">
-              <div className="font-medium">{t.title}</div>
-              <div className="text-xs text-muted-foreground flex items-center gap-2">
-                <span className="rounded border px-2 py-0.5">{t.category}</span>
-                <span className="rounded border px-2 py-0.5">{t.difficulty}</span>
-                <span className="text-[11px]">{t.acceptance.length} criteria</span>
-              </div>
+          <Link key={t.id} to={`/app/tasks/${t.id}`} className="rounded-xl border bg-background/60 backdrop-blur p-4 hover:bg-accent/40 transition-colors">
+            <div className="font-medium text-base">{t.title}</div>
+            <div className="mt-1 text-xs text-muted-foreground flex items-center gap-2">
+              <span className="rounded border px-2 py-0.5">{t.category}</span>
+              <span className="rounded border px-2 py-0.5">{t.difficulty}</span>
+              <span>{t.acceptance.length} criteria</span>
             </div>
-            <span className="text-sm underline">Open</span>
+            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{t.description}</p>
           </Link>
         ))}
-        {!filtered.length && (
-          <div className="p-6 text-sm text-muted-foreground">No tasks match your filters.</div>
-        )}
       </div>
+      {!filtered.length && (
+        <div className="p-6 text-sm text-muted-foreground">No tasks match your filters.</div>
+      )}
     </div>
   );
 }

@@ -18,13 +18,16 @@ export default function History() {
   }, [user]);
 
   return (
-    <div className="p-6 space-y-4">
-      <h2 className="text-2xl font-semibold">History</h2>
-      <div className="rounded-md border divide-y">
+    <div className="space-y-5">
+      <header>
+        <h1 className="text-3xl font-bold tracking-tight">History</h1>
+        <p className="text-muted-foreground text-sm">Your past submissions</p>
+      </header>
+      <div className="rounded-xl border bg-background/60 backdrop-blur divide-y">
         {loading ? (
           <div className="px-4 py-6 text-sm text-muted-foreground">Loading…</div>
         ) : subs.map((s) => (
-          <div key={s.id} className="px-4 py-3 text-sm flex items-center justify-between">
+          <div key={s.id} className="px-4 py-4 text-sm flex items-center justify-between">
             <div>
               <div className="font-medium">{s.taskId}</div>
               <div className="text-xs text-muted-foreground">{new Date(s.createdAt?.toDate?.() ?? Date.now()).toLocaleString()}</div>
