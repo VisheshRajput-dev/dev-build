@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import msgs from "@/data/messages.json";
 import tasks from "@/data/tasks.json";
 
@@ -21,13 +22,18 @@ export default function Inbox() {
         </select>
       </div>
       <div className="rounded-md border divide-y">
+        {filtered.length === 0 && (
+          <div className="px-4 py-6 text-sm text-muted-foreground">No messages.</div>
+        )}
         {filtered.map((m) => (
-          <div key={m.id} className="px-4 py-3 text-sm">
-            <div className="text-xs text-muted-foreground">{m.taskId}</div>
-            <div>{m.text}</div>
+          <div key={m.id} className="px-4 py-3 text-sm flex items-start justify-between gap-3">
+            <div>
+              <div className="text-xs text-muted-foreground">{m.taskId}</div>
+              <div>{m.text}</div>
+            </div>
+            <Link className="underline text-xs" to={`/app/tasks/${m.taskId}`}>Open task</Link>
           </div>
         ))}
-        {!filtered.length && <div className="px-4 py-6 text-sm text-muted-foreground">No messages.</div>}
       </div>
     </div>
   );

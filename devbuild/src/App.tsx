@@ -7,6 +7,7 @@ import Inbox from "@/routes/Inbox";
 import History from "@/routes/History";
 import Profile from "@/routes/Profile";
 import AppShell from "@/components/layout/AppShell";
+import RequireAuth from "@/components/auth/RequireAuth";
 
 function App() {
   return (
@@ -16,57 +17,71 @@ function App() {
         <Route
           path="/app"
           element={
-            <AppShell>
-              <Dashboard />
-            </AppShell>
+            <RequireAuth>
+              <AppShell>
+                <Dashboard />
+              </AppShell>
+            </RequireAuth>
           }
         />
         <Route
           path="/app/dashboard"
           element={
-            <AppShell>
-              <Dashboard />
-            </AppShell>
+            <RequireAuth>
+              <AppShell>
+                <Dashboard />
+              </AppShell>
+            </RequireAuth>
           }
         />
         <Route
           path="/app/tasks"
           element={
-            <AppShell>
-              <Tasks />
-            </AppShell>
+            <RequireAuth>
+              <AppShell>
+                <Tasks />
+              </AppShell>
+            </RequireAuth>
           }
         />
         <Route
           path="/app/tasks/:taskId"
           element={
-            <AppShell>
-              <TaskDetail />
-            </AppShell>
+            <RequireAuth>
+              <AppShell>
+                <TaskDetail />
+              </AppShell>
+            </RequireAuth>
           }
         />
         <Route
           path="/app/inbox"
           element={
-            <AppShell>
-              <Inbox />
-            </AppShell>
+            <RequireAuth>
+              <AppShell>
+                <Inbox />
+              </AppShell>
+            </RequireAuth>
           }
         />
         <Route
           path="/app/history"
           element={
-            <AppShell>
-              <History />
-            </AppShell>
+            <RequireAuth>
+              <AppShell>
+                <History />
+              </AppShell>
+            </RequireAuth>
           }
         />
         <Route
           path="/app/profile"
           element={
-            <AppShell>
-              <Profile />
-            </AppShell>
+            <RequireAuth>
+              <AppShell>
+                <Profile />
+              </AppShell>
+            </RequireAuth>
           }
         />
       </Routes>

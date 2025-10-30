@@ -1,5 +1,5 @@
 import { getFirebase } from "@/lib/firebase";
-import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, limit, query, serverTimestamp, setDoc, where } from "firebase/firestore";
 
 export type SubmissionDoc = {
   userId: string;
@@ -44,14 +44,16 @@ export async function incrementUserXp(userId: string, delta: number) {
 
 export async function getRecentSubmissions(userId: string, count = 5) {
   const { db } = getFirebase();
-  const q = query(
-    collection(db, "submissions"),
-    where("userId", "==", userId),
-    orderBy("createdAt", "desc"),
-    limit(count)
-  );
+  // Avoid composite index requirement by sorting client-side
+  const q = query(collection(db, "submissions"), where("userId", "==", userId), limit(50));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+  const rows = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+  rows.sort((a: any, b: any) => {
+    const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+    const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+    return tb - ta;
+  });
+  return rows.slice(0, count);
 }
 
 

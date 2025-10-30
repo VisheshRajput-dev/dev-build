@@ -20,12 +20,14 @@ export function setAiEnabled(enabled: boolean) {
 }
 
 export function setAiKey(key: string) {
-  localStorage.setItem(AI_KEY_KEY, key);
+  localStorage.setItem(AI_KEY_KEY, key.trim());
 }
 
 export async function validateGeminiKey(key: string): Promise<boolean> {
+  key = key.trim();
   if (!key) return false;
   try {
+    // Use v1beta + stable model name to avoid regional alias issues
     const ok = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(
         key
@@ -36,7 +38,14 @@ export async function validateGeminiKey(key: string): Promise<boolean> {
         body: JSON.stringify({ contents: [{ parts: [{ text: "ping" }] }] }),
       }
     );
-    return ok.status === 200;
+    if (ok.status === 200) return true;
+    // Try to parse error for clearer signal
+    try {
+      const err = await ok.json();
+      const msg = String(err?.error?.message ?? "");
+      if (msg.toLowerCase().includes("api key") || msg.toLowerCase().includes("invalid")) return false;
+    } catch {}
+    return false;
   } catch {
     return false;
   }
@@ -55,8 +64,9 @@ export async function reviewCodeWithGemini(params: {
   lastCallAt = now;
 
   const prompt = buildPrompt(params.task, params.files);
+  const { baseUrl, model } = await ensureUsableModel(params.key);
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(
+    `${baseUrl}/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(
       params.key
     )}`,
     {
@@ -98,6 +108,39 @@ function safeParseReviewJson(text: string): ReviewOutput {
     }
   } catch {}
   return { summary: "", positives: [], issues: [], score: 0 };
+}
+
+let cachedModel: { baseUrl: string; model: string } | null = null;
+async function ensureUsableModel(key: string): Promise<{ baseUrl: string; model: string }> {
+  if (cachedModel) return cachedModel;
+  // Try v1 first
+  const candidates: Array<{ baseUrl: string; listUrl: string }> = [
+    { baseUrl: "https://generativelanguage.googleapis.com/v1", listUrl: `https://generativelanguage.googleapis.com/v1/models?key=${encodeURIComponent(key)}` },
+    { baseUrl: "https://generativelanguage.googleapis.com/v1beta", listUrl: `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}` },
+  ];
+  const wantOrder = [
+    "gemini-1.5-flash-002",
+    "gemini-1.5-flash-latest",
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-8b",
+  ];
+  for (const cfg of candidates) {
+    try {
+      const r = await fetch(cfg.listUrl);
+      if (!r.ok) continue;
+      const j = await r.json();
+      const names: string[] = (j.models || []).map((m: any) => String(m.name || ""));
+      const simple = names.map((n) => n.split("/").pop() || n);
+      const found = wantOrder.find((w) => simple.includes(w));
+      if (found) {
+        cachedModel = { baseUrl: cfg.baseUrl, model: found };
+        return cachedModel;
+      }
+    } catch {}
+  }
+  // Fallback to a commonly available one
+  cachedModel = { baseUrl: "https://generativelanguage.googleapis.com/v1beta", model: "gemini-1.5-flash" };
+  return cachedModel;
 }
 
 

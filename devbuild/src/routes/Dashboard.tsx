@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [xp, setXp] = useState<number>(0);
   const [level, setLevel] = useState<number>(1);
   const [recent, setRecent] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function load() {
@@ -23,6 +24,7 @@ export default function Dashboard() {
       }
       const subs = await getRecentSubmissions(user.uid, 5);
       setRecent(subs);
+      setLoading(false);
     }
     load();
   }, [user]);
@@ -40,7 +42,9 @@ export default function Dashboard() {
       </div>
       <div className="rounded-md border">
         <div className="px-4 py-2 border-b font-medium">Recent submissions</div>
-        {recent.length ? (
+        {loading ? (
+          <div className="px-4 py-6 text-sm text-muted-foreground">Loading…</div>
+        ) : recent.length ? (
           recent.map((r) => (
             <div key={r.id} className="px-4 py-2 text-sm flex items-center justify-between border-b last:border-b-0">
               <span>{r.taskId}</span>

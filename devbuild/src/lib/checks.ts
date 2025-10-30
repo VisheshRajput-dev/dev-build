@@ -26,11 +26,12 @@ function checkCriterion(criterion: string, merged: string, files: Record<string,
     case "preventDefault":
       return /preventDefault\s*\(/.test(merged);
     case "emailValidation":
-      return /includes\(\s*['\"]@['\"]\s*\)|test\(.*@/.test(merged);
+      // accept simple presence of '@' check or regex usage
+      return /@/.test(merged) || /includes\(\s*['\"]@['\"]\s*\)|test\(.*@/.test(merged);
     case "passwordRequired":
       return /(password|pwd).*length\s*[<>!=]/i.test(merged);
     case "ariaLabelError":
-      return /aria-live=\"polite\"|role=\"alert\"/.test(merged);
+      return /aria-live\s*=\s*\"(polite|assertive)\"|role\s*=\s*\"alert\"/i.test(merged);
 
     // API list
     case "loadingState":

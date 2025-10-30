@@ -20,15 +20,18 @@ export default function TaskDetail() {
       </div>
     );
   }
-  const defaultFiles = useMemo<FileMap>(() => ({ ...(task.starterFiles || {}) }), [task]);
-  const [files, setFiles] = useState<FileMap>(defaultFiles);
+  const initialFiles = useMemo<FileMap>(() => {
+    const base = { ...(task.starterFiles || {}) } as FileMap;
+    const saved = loadLocalTask(task.id);
+    return saved ? { ...base, ...saved } : base;
+  }, [task]);
+  const [files, setFiles] = useState<FileMap>(initialFiles);
   const { user } = useAuth();
 
+  // When switching tasks, refresh state from local storage
   useEffect(() => {
-    const saved = loadLocalTask(task.id);
-    if (saved) setFiles({ ...defaultFiles, ...saved });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [task.id]);
+    setFiles(initialFiles);
+  }, [initialFiles]);
 
   useEffect(() => {
     saveLocalTask(task.id, files);
@@ -75,6 +78,28 @@ export default function TaskDetail() {
     }
   }
 
+  function handleResetToStarter() {
+    if (confirm("Reset files to starter? This will overwrite current edits for this task.")) {
+      const base = { ...(task.starterFiles || {}) } as FileMap;
+      setFiles(base);
+      saveLocalTask(task.id, base);
+      setResults(null);
+      setSubmitMsg(null);
+    }
+  }
+
+  function handleDownload() {
+    const blob = new Blob([JSON.stringify(files, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${task.id}-files.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
   return (
     <div className="p-6 grid gap-6 lg:grid-cols-2">
       <div className="space-y-4">
@@ -101,14 +126,25 @@ export default function TaskDetail() {
             </ul>
           </div>
         ) : null}
-        <div className="pt-2 flex gap-2">
+        <div className="pt-2 flex gap-2 flex-wrap">
           <button onClick={handleRunChecks} className="h-9 rounded-md border px-3 text-sm bg-primary text-primary-foreground">
             Run checks
           </button>
           <button onClick={handleSubmit} disabled={submitting} className="h-9 rounded-md border px-3 text-sm bg-secondary">
             {submitting ? "Submitting..." : "Submit for XP"}
           </button>
+          <button onClick={handleResetToStarter} className="h-9 rounded-md border px-3 text-sm">
+            Reset to starter
+          </button>
+          <button onClick={handleDownload} className="h-9 rounded-md border px-3 text-sm">
+            Download files
+          </button>
         </div>
+        {submitMsg && (
+          <div className="rounded-md border border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400 px-4 py-2 text-sm">
+            {submitMsg}
+          </div>
+        )}
         {results && (
           <div className="rounded-md border divide-y">
             {results.map((r) => (
@@ -119,7 +155,6 @@ export default function TaskDetail() {
             ))}
           </div>
         )}
-        {submitMsg && <div className="text-sm text-muted-foreground">{submitMsg}</div>}
       </div>
       <div>
         <EditorPane files={files} onChange={setFiles} height={560} />
