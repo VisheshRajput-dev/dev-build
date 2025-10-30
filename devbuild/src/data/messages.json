@@ -1,0 +1,8 @@
+[
+  { "id": "m1", "taskId": "frontend-login-bug", "role": "client", "text": "Users report the login form refreshes and loses input. Please prevent that." },
+  { "id": "m2", "taskId": "frontend-login-bug", "role": "client", "text": "We also need basic validation: email must include @ and password required." },
+  { "id": "m3", "taskId": "fs-api-list", "role": "client", "text": "Fetch items from /api/items and show title + status. Add loading and error states." },
+  { "id": "m4", "taskId": "frontend-modal", "role": "client", "text": "Modal must trap focus and close on ESC." }
+]
+
+

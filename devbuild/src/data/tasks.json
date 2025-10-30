@@ -1,0 +1,178 @@
+[
+  {
+    "id": "frontend-login-bug",
+    "title": "Fix login form submission bug",
+    "description": "Users cannot submit the login form due to default page reload. Prevent default, validate inputs, and show an error message.",
+    "category": "frontend",
+    "difficulty": "easy",
+    "acceptance": [
+      "Form does not refresh the page on submit",
+      "Email is required and validated",
+      "Password is required",
+      "Error is announced accessibly"
+    ],
+    "rubric": {
+      "criteria": ["preventDefault", "emailValidation", "passwordRequired", "ariaLabelError"]
+    },
+    "starterFiles": {
+      "src/task/App.tsx": "export function Login() {\n  function handleSubmit(e: React.FormEvent) {\n    // TODO: fix\n  }\n  return (\n    <form onSubmit={handleSubmit}>\n      <label htmlFor=\"email\">Email</label>\n      <input id=\"email\" name=\"email\" />\n      <label htmlFor=\"password\">Password</label>\n      <input id=\"password\" name=\"password\" type=\"password\" />\n      <button type=\"submit\">Login</button>\n      <div role=\"alert\" aria-live=\"polite\"></div>\n    </form>\n  );\n}\n",
+      "src/task/main.tsx": "import { createRoot } from 'react-dom/client'\nimport { Login } from './App'\ncreateRoot(document.getElementById('root')!).render(<Login />)\n"
+    },
+    "hints": [
+      "Use e.preventDefault() in submit handler",
+      "Check if email includes '@'",
+      "Update alert region text when invalid"
+    ]
+  },
+  {
+    "id": "fs-api-list",
+    "title": "Render a list from a mock API",
+    "description": "Fetch items from /api/items and display title and status with loading and error states.",
+    "category": "fullstack",
+    "difficulty": "easy",
+    "acceptance": [
+      "Shows loading while fetching",
+      "Renders list of items",
+      "Graceful error message on failure"
+    ],
+    "rubric": { "criteria": ["loadingState", "renderItems", "errorState"] },
+    "starterFiles": {
+      "src/task/App.tsx": "export function Items() {\n  // TODO: fetch and render\n  return <div>Items</div>\n}\n",
+      "src/task/main.tsx": "import { createRoot } from 'react-dom/client'\nimport { Items } from './App'\ncreateRoot(document.getElementById('root')!).render(<Items />)\n"
+    },
+    "hints": ["Use fetch and handle try/catch", "Show a fallback error message"]
+  },
+  {
+    "id": "frontend-modal",
+    "title": "Build an accessible modal",
+    "description": "Create a modal that opens/closes, traps focus, and closes on ESC/background click.",
+    "category": "frontend",
+    "difficulty": "medium",
+    "acceptance": [
+      "Opens and closes via a button",
+      "Focus is trapped inside",
+      "ESC key closes the modal"
+    ],
+    "rubric": { "criteria": ["openClose", "focusTrap", "escClose"] },
+    "starterFiles": {
+      "src/task/App.tsx": "export function ModalDemo(){return (<div><button>Open</button></div>)}",
+      "src/task/main.tsx": "import { createRoot } from 'react-dom/client'\nimport { ModalDemo } from './App'\ncreateRoot(document.getElementById('root')!).render(<ModalDemo />)\n"
+    },
+    "hints": ["Use aria-modal and role='dialog'", "Return focus to trigger on close"]
+  },
+  {
+    "id": "frontend-accessibility",
+    "title": "Improve form accessibility",
+    "description": "Ensure labels are connected, provide aria-live error, and keyboard navigable inputs.",
+    "category": "frontend",
+    "difficulty": "easy",
+    "acceptance": ["Labels use htmlFor", "aria-live error region", "Tab order correct"],
+    "rubric": { "criteria": ["labels", "ariaLive", "tabOrder"] },
+    "starterFiles": {
+      "src/task/App.tsx": "export function Form(){return (<form><input id='email'/><input id='pwd' type='password'/><button>Go</button></form>)}",
+      "src/task/main.tsx": "import { createRoot } from 'react-dom/client'\nimport { Form } from './App'\ncreateRoot(document.getElementById('root')!).render(<Form />)\n"
+    },
+    "hints": ["Use <label htmlFor> correctly", "Add aria-live polite for errors"]
+  },
+  {
+    "id": "frontend-state",
+    "title": "Build a controlled input with validation",
+    "description": "Create a controlled input that validates min length and shows inline feedback.",
+    "category": "frontend",
+    "difficulty": "easy",
+    "acceptance": ["Controlled value", "Min length check", "Feedback updates as you type"],
+    "rubric": { "criteria": ["controlled", "minLength", "liveFeedback"] },
+    "starterFiles": {"src/task/App.tsx": "export function Username(){return <input/>}","src/task/main.tsx": "import { createRoot } from 'react-dom/client'\nimport { Username } from './App'\ncreateRoot(document.getElementById('root')!).render(<Username />)\n"},
+    "hints": ["Use useState", "Derive validation from value"]
+  },
+  {
+    "id": "frontend-list-filter",
+    "title": "Filter a list by search",
+    "description": "Render a list and add a search box that filters by title, case-insensitive.",
+    "category": "frontend",
+    "difficulty": "easy",
+    "acceptance": ["Input filters list", "No results state"],
+    "rubric": { "criteria": ["filters", "emptyState"] },
+    "starterFiles": {"src/task/App.tsx": "const data=[{id:1,title:'Alpha'},{id:2,title:'Beta'}];export function List(){return <div/>}","src/task/main.tsx": "import { createRoot } from 'react-dom/client'\nimport { List } from './App'\ncreateRoot(document.getElementById('root')!).render(<List />)\n"},
+    "hints": ["Convert both to lower case", "Filter by includes"]
+  },
+  {
+    "id": "backend-validate",
+    "title": "Design validation for a signup API",
+    "description": "Write a function validate(input) that returns specific error codes for invalid fields.",
+    "category": "backend",
+    "difficulty": "medium",
+    "acceptance": ["Returns {ok:true} on valid", "Returns {ok:false, errors:{...}} on invalid"],
+    "rubric": { "criteria": ["validOk", "invalidCodes"] },
+    "starterFiles": {"src/task/validate.ts": "export function validate(input:any){ /* TODO */ return { ok:false, errors:{ general:'unimplemented' } } }"},
+    "hints": ["Check email format", "Min password length 8"]
+  },
+  {
+    "id": "backend-mapper",
+    "title": "Map error codes to HTTP",
+    "description": "Implement mapToHttp(code) returning correct status for domain errors.",
+    "category": "backend",
+    "difficulty": "easy",
+    "acceptance": ["E_USER_EXISTS -> 409", "E_INVALID_INPUT -> 400", "default 500"],
+    "rubric": { "criteria": ["exists409", "invalid400", "default500"] },
+    "starterFiles": {"src/task/map.ts": "export function mapToHttp(code:string){ /* TODO */ return 500 }"},
+    "hints": ["Use a dictionary", "Return number"]
+  },
+  {
+    "id": "fullstack-loading-error",
+    "title": "Show loading and error states",
+    "description": "Wrap a fetch with loading and error UI states before rendering data.",
+    "category": "fullstack",
+    "difficulty": "easy",
+    "acceptance": ["Shows spinner", "Shows error message", "Renders data when ok"],
+    "rubric": { "criteria": ["spinner", "error", "data"] },
+    "starterFiles": {"src/task/App.tsx": "export function LoaderDemo(){return <div/>}"},
+    "hints": ["Track status in state", "try/catch"]
+  },
+  {
+    "id": "frontend-tabs",
+    "title": "Implement tabs with keyboard support",
+    "description": "Create tabs where arrow keys move focus between tab headers.",
+    "category": "frontend",
+    "difficulty": "medium",
+    "acceptance": ["Arrow keys move focus", "Active tab panel is visible"],
+    "rubric": { "criteria": ["arrowNav", "panelVisible"] },
+    "starterFiles": {"src/task/App.tsx": "export function Tabs(){return <div role='tablist'></div>}"},
+    "hints": ["Use roving tabindex", "aria-controls/selected"]
+  },
+  {
+    "id": "frontend-toast",
+    "title": "Build a toast notification",
+    "description": "Show a toast message that disappears after 3 seconds.",
+    "category": "frontend",
+    "difficulty": "easy",
+    "acceptance": ["Appears on click", "Auto hides"],
+    "rubric": { "criteria": ["appear", "autoHide"] },
+    "starterFiles": {"src/task/App.tsx": "export function ToastDemo(){return <button>Show</button>}"},
+    "hints": ["useState + setTimeout", "Clear timeout on unmount"]
+  },
+  {
+    "id": "fullstack-form-submit",
+    "title": "Submit a form to a mock endpoint",
+    "description": "Post form data to /api/submit and show success or error.",
+    "category": "fullstack",
+    "difficulty": "medium",
+    "acceptance": ["POST sent with JSON", "Success message on 200", "Error on non-200"],
+    "rubric": { "criteria": ["postJson", "success", "failure"] },
+    "starterFiles": {"src/task/App.tsx": "export function Submit(){return <form></form>}"},
+    "hints": ["Use fetch with method POST", "JSON.stringify body"]
+  },
+  {
+    "id": "frontend-aria-live",
+    "title": "Announce dynamic updates with aria-live",
+    "description": "Add aria-live region that announces counter updates.",
+    "category": "frontend",
+    "difficulty": "easy",
+    "acceptance": ["Region with aria-live=polite", "Updates when count changes"],
+    "rubric": { "criteria": ["hasRegion", "announces"] },
+    "starterFiles": {"src/task/App.tsx": "export function Counter(){return <div/>}"},
+    "hints": ["Update innerText of region", "polite is enough"]
+  }
+]
+
+
