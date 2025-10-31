@@ -9,7 +9,7 @@ import bgWebp from "@/assets/bgg.webp";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { user, signInWithGoogle, signOutUser } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   async function handleSignIn() {
     await signInWithGoogle();
     // best-effort ensure user doc

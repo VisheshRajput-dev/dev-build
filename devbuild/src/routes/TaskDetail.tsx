@@ -21,7 +21,12 @@ export default function TaskDetail() {
     );
   }
   const initialFiles = useMemo<FileMap>(() => {
-    const base = { ...(task.starterFiles || {}) } as FileMap;
+    const base: FileMap = {};
+    if (task.starterFiles) {
+      Object.entries(task.starterFiles).forEach(([k, v]) => {
+        if (typeof v === "string") base[k] = v;
+      });
+    }
     const saved = loadLocalTask(task.id);
     return saved ? { ...base, ...saved } : base;
   }, [task]);
@@ -60,7 +65,11 @@ export default function TaskDetail() {
       const ai = getAiSettings();
       if (ai.enabled && ai.key) {
         try {
-          const review = await reviewCodeWithGemini({ key: ai.key, task, files });
+          const review = await reviewCodeWithGemini({
+            key: ai.key,
+            task: { title: task.title, description: task.description, acceptance: task.acceptance },
+            files,
+          });
           // Blend scores 60% static, 40% AI
           score = Math.round(0.6 * score + 0.4 * (review.score ?? 0));
         } catch {
@@ -80,7 +89,12 @@ export default function TaskDetail() {
 
   function handleResetToStarter() {
     if (confirm("Reset files to starter? This will overwrite current edits for this task.")) {
-      const base = { ...(task.starterFiles || {}) } as FileMap;
+      const base: FileMap = {};
+      if (task.starterFiles) {
+        Object.entries(task.starterFiles).forEach(([k, v]) => {
+          if (typeof v === "string") base[k] = v;
+        });
+      }
       setFiles(base);
       saveLocalTask(task.id, base);
       setResults(null);

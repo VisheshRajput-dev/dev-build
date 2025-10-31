@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import logoPng from "@/assets/logo.png";

@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd devbuild && npm install && npm run build",
+  "outputDirectory": "devbuild/dist",
+  "installCommand": "cd devbuild && npm install"
+}
+

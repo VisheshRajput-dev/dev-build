@@ -16,11 +16,11 @@ export function runChecks(task: TaskLike, files: Record<string, string>): CheckR
 
   return criteria.map((c) => ({
     name: c,
-    passed: checkCriterion(c, merged, files),
+    passed: checkCriterion(c, merged),
   }));
 }
 
-function checkCriterion(criterion: string, merged: string, files: Record<string, string>): boolean {
+function checkCriterion(criterion: string, merged: string): boolean {
   switch (criterion) {
     // Frontend login bug
     case "preventDefault":
