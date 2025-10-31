@@ -11,8 +11,8 @@ import { getAiSettings, reviewCodeWithGemini } from "@/lib/ai";
 
 export default function TaskDetail() {
   const { taskId } = useParams();
-  const task = tasks.find((t) => t.id === taskId);
-  if (!task) {
+  const foundTask = tasks.find((t) => t.id === taskId);
+  if (!foundTask) {
     return (
       <div className="p-6 space-y-3">
         <h2 className="text-2xl font-semibold">Task not found</h2>
@@ -20,6 +20,9 @@ export default function TaskDetail() {
       </div>
     );
   }
+  // After early return guard, task is guaranteed to exist
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const task = foundTask!;
   const initialFiles = useMemo<FileMap>(() => {
     const base: FileMap = {};
     if (task.starterFiles) {
